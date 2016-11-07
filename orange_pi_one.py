@@ -35,18 +35,20 @@ def send_value_to_decoder(number):
     for d in range(4):
         gpio.output(decoder_ports[d], int(code[d]))
 
-while True:
-    now = datetime.datetime.now()
-    hour, minute, second = now.hour, now.minute, now.second
-    digits[0] = hour // 10
-    digits[1] = hour % 10
-    digits[2] = minute // 10
-    digits[3] = minute % 10
-    digits[4] = second // 10
-    digits[5] = second % 10
-    # будем выводить полученные цифры пока не наступит следующая секунда
-    while datetime.datetime.now() < now + datetime.timedelta(seconds=1):
-        print('\r', digits, end='')  # console log
-        for key, value in enumerate(digits):
-            set_digit(key, value)
-            sleep(0.0008)
+
+if __name__=='__main__':
+    while True:
+        now = datetime.datetime.now()
+        hour, minute, second = now.hour, now.minute, now.second
+        digits[0] = hour // 10
+        digits[1] = hour % 10
+        digits[2] = minute // 10
+        digits[3] = minute % 10
+        digits[4] = second // 10
+        digits[5] = second % 10
+        # будем выводить полученные цифры пока не наступит следующая секунда
+        while datetime.datetime.now() < now + datetime.timedelta(seconds=1):
+            print('\r', digits, end='')  # console log
+            for key, value in enumerate(digits):
+                set_digit(key, value)
+                sleep(0.0008)
