@@ -1,27 +1,25 @@
 import datetime
 from time import sleep
-from RPi import GPIO
-# инициализируем GPIO на выход и посылаем туда False (на выходе будет 0 вольт)
-GPIO.setmode(GPIO.BCM)
-for i in range(1, 11):
-    GPIO.setup(i, GPIO.OUT)
-    sleep(0.05)
-    GPIO.output(i, False)
+from pyA20.gpio import gpio, port
+gpio.init()
+
 # цифры-разряды наших часов, моделирует лампы устройства. Всего 6 ламп: ЧЧ ММ СС
 digits = [0]*6
 # таблица двоичных чисел для декодера:
 encoded = ['0000', '0001', '0010', '0011', '0100', '0101', '0110', '0111', '1000', '1001']
+# таблица GPIO контактов декодера
+decoder = [port.PC0, port.PC1, port.PC2, port.PC3]
+# таблица GPIO контактов ламп
+lamps = [port.PA19, port.PA7, port.PA8, port.PA9, port.PA10, port.PA20]
 
 
-def set_digit(digit, value):
+def set_digit(lamp, value):
     """switch on digit through GPIO"""
-    # нумерация GPIO 1-6, а массив digits, который представляет лампы 0-5. Поэтому:
-    digit += 1
     # вначале потушим лампу, которая сейчас горит:
-    previous_lamp = 6 if digit == 1 else digit - 1
-    GPIO.output(previous_lamp, False)
+    previous_lamp = 5 if lamp == 0 else lamp - 1
+    gpio.output(lamps[previous_lamp], 0)
     # теперь зажжем нужную
-    GPIO.output(digit, True)
+    gpio.output(lamps[lamp], 1)
     send_value_to_decoder(value)
 
 
@@ -29,10 +27,8 @@ def send_value_to_decoder(number):
     """кодирует цифру 0-9 в 4-битное число и посылает его на GPIO 7-10
     Соответствие: разряд_числа -> GPIO:  0->7 1->8 2->9 3->10 """
     code = encoded[number]
-    GPIO.output(7, code[0])
-    GPIO.output(8, code[1])
-    GPIO.output(9, code[2])
-    GPIO.output(10, code[3])
+    for j in range(4):
+        gpio.output(decoder[j], code[j])
 
 while True:
     now = datetime.datetime.now()
