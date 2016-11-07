@@ -18,7 +18,7 @@ for p in lamps_ports:
     gpio.setcfg(p, gpio.OUTPUT)
 
 
-def set_digit(lamp, value):
+def set_lamp(lamp, value):
     """switch on digit through GPIO"""
     # вначале потушим лампу, которая сейчас горит:
     previous_lamp = 5 if lamp == 0 else lamp - 1
@@ -29,14 +29,22 @@ def set_digit(lamp, value):
 
 
 def send_value_to_decoder(number):
-    """кодирует цифру 0-9 в 4-битное число и посылает его на GPIO 7-10
-    Соответствие: разряд_числа -> GPIO:  0->7 1->8 2->9 3->10 """
+    """кодирует цифру 0-9 в 4-битное число и посылает его на GPIO
+    согласно таблице соответствия decoder_ports"""
     code = encoded[number]
     for d in range(4):
         gpio.output(decoder_ports[d], int(code[d]))
 
 
-if __name__=='__main__':
+def show_same_numbers_on_all_digits(number, pause=0.0008):
+    """отладочная функция для проверки работы дешифратора"""
+    while True:
+        for i in range(6):
+            set_lamp(i, number)
+            sleep(pause)
+
+
+if __name__ == '__main__':
     while True:
         now = datetime.datetime.now()
         hour, minute, second = now.hour, now.minute, now.second
@@ -50,5 +58,5 @@ if __name__=='__main__':
         while datetime.datetime.now() < now + datetime.timedelta(seconds=1):
             print('\r', digits, end='')  # console log
             for key, value in enumerate(digits):
-                set_digit(key, value)
+                set_lamp(key, value)
                 sleep(0.0008)
