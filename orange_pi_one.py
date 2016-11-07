@@ -8,18 +8,23 @@ digits = [0]*6
 # таблица двоичных чисел для декодера:
 encoded = ['0000', '0001', '0010', '0011', '0100', '0101', '0110', '0111', '1000', '1001']
 # таблица GPIO контактов декодера
-decoder = [port.PC0, port.PC1, port.PC2, port.PC3]
+decoder_ports = [port.PC0, port.PC1, port.PC2, port.PC3]
 # таблица GPIO контактов ламп
-lamps = [port.PA19, port.PA7, port.PA8, port.PA9, port.PA10, port.PA20]
+lamps_ports = [port.PA19, port.PA7, port.PA8, port.PA9, port.PA10, port.PA20]
+# инициализируем эти порты на выход сигнала
+for p in decoder_ports:
+    gpio.setcfg(p, gpio.OUTPUT)
+for p in lamps_ports:
+    gpio.setcfg(p, gpio.OUTPUT)
 
 
 def set_digit(lamp, value):
     """switch on digit through GPIO"""
     # вначале потушим лампу, которая сейчас горит:
     previous_lamp = 5 if lamp == 0 else lamp - 1
-    gpio.output(lamps[previous_lamp], 0)
+    gpio.output(lamps_ports[previous_lamp], 0)
     # теперь зажжем нужную
-    gpio.output(lamps[lamp], 1)
+    gpio.output(lamps_ports[lamp], 1)
     send_value_to_decoder(value)
 
 
@@ -27,8 +32,8 @@ def send_value_to_decoder(number):
     """кодирует цифру 0-9 в 4-битное число и посылает его на GPIO 7-10
     Соответствие: разряд_числа -> GPIO:  0->7 1->8 2->9 3->10 """
     code = encoded[number]
-    for j in range(4):
-        gpio.output(decoder[j], int(code[j]))
+    for d in range(4):
+        gpio.output(decoder_ports[d], int(code[d]))
 
 while True:
     now = datetime.datetime.now()
