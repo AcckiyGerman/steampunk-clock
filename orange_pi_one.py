@@ -28,7 +28,7 @@ def send_value_to_decoder(number):
     Соответствие: разряд_числа -> GPIO:  0->7 1->8 2->9 3->10 """
     code = encoded[number]
     for j in range(4):
-        gpio.output(decoder[j], code[j])
+        gpio.output(decoder[j], int(code[j]))
 
 while True:
     now = datetime.datetime.now()
