@@ -13,6 +13,8 @@ for i in range(1, 11):
 digits = [0, 0,  # hour
           0, 0,  # minute
           0, 0]  # second
+# таблица двоичных чисел для декодера:
+encoded = ['0000', '0001', '0010', '0011', '0100', '0101', '0110', '0111', '1000', '1001']
 
 
 def set_digit(digit, value):
@@ -29,12 +31,14 @@ def set_digit(digit, value):
     send_value_to_decoder(value)
 
 
-def send_value_to_decoder(value):
+def send_value_to_decoder(number):
     """кодирует цифру 0-9 в 4-битное число и посылает его на GPIO 7-10"""
     # 0->7 1->8 2->9 3->10
-
-    bit_view = bin(value + 16)
-    print(bit_view)
+    code = encoded[number]
+    GPIO.output(10, code[0])
+    GPIO.output(9, code[1])
+    GPIO.output(8, code[2])
+    GPIO.output(7, code[3])
 
 # main cycle
 while True:
@@ -53,7 +57,6 @@ while True:
     # будем выводить полученные цифры пока не наступит следующая секунда
     while datetime.datetime.now() < now + datetime.timedelta(seconds=1):
         print('\r', digits, end='')  # console log
-
         for key, value in enumerate(digits):
             set_digit(key, value)
             sleep(0.0008)
