@@ -1,6 +1,10 @@
 import datetime
 from time import sleep
-from RPi import GPIO
+try:
+    from RPi import GPIO
+except ImportError:
+    import pyA20.gpio as GPIO
+
 # инициализируем GPIO на выход и посылаем туда False (на выходе будет 0 вольт)
 GPIO.setmode(GPIO.BCM)
 for i in range(1, 11):
