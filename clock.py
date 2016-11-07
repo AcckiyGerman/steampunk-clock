@@ -1,12 +1,19 @@
 import datetime
 from time import sleep
-import os
+from RPi import GPIO
+
 
 # цифры-разряды наших часов, всего 6 ламп
 digits = [0, 0,  # hour
           0, 0,  # minute
           0, 0]  # second
 
+
+def set_digit(digit, value):
+    """send data to GPIO"""
+    pass
+
+# main cycle
 while True:
     now = datetime.datetime.now()
     hour, minute, second = now.hour, now.minute, now.second
@@ -24,6 +31,6 @@ while True:
     while datetime.datetime.now() < now + datetime.timedelta(seconds=1):
         print('\r', digits, end='')  # console log
 
-        for digit_number, value in enumerate(digits):
-            set_digit(digit_number, value)
+        for digit, value in enumerate(digits):
+            set_digit(digit, value)
             sleep(0.0008)
