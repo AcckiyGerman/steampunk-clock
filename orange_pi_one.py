@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import datetime
 from time import sleep
 from pyA20.gpio import gpio, port
