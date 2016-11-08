@@ -36,8 +36,8 @@ def send_value_to_decoder(number):
         gpio.output(decoder_ports[d], int(code[d]))
 
 
-def show_same_numbers_on_all_digits(number, pause=0.0008):
-    """отладочная функция для проверки работы дешифратора"""
+def test(number, pause=0.0008):
+    """отладочная функция для проверки работы дешифратора. выводит одну цифру на все лампы"""
     while True:
         for i in range(6):
             set_lamp(i, number)
